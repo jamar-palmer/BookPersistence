@@ -2,4 +2,29 @@
     <string name="app_name">BookShelf</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="authors">
+        <item>J.K. Rowling</item>
+        <item>J.R.R. Tolkien</item>
+        <item>Dan Brown</item>
+        <item>Paulo Coelho</item>
+        <item>J.D. Salinger</item>
+        <item>Johanna Spyri</item>
+        <item>Anna Sewell</item>
+        <item>Richard Adams</item>
+        <item>Shere Hite</item>
+        <item>J.P. Donleavy</item>
+
+    </string-array>
+    <string-array name="books">
+        <item>Harry Potter</item>
+        <item>The Hobbit</item>
+        <item>The Da Vinci Code</item>
+        <item>The Alchemist</item>
+        <item>The Catcher in the Rye</item>
+        <item>Heidi</item>
+        <item>Black Beauty</item>
+        <item>Watership Down</item>
+        <item>The Hite Report</item>
+        <item>The Ginger Man</item>
+    </string-array>
 </resources>

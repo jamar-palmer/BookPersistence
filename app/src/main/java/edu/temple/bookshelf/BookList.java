@@ -1,19 +1,38 @@
 package edu.temple.bookshelf;
 
-import java.util.List;
+import android.os.Parcel;
+import android.os.Parcelable;
 
-public class BookList {
-    private List<Book> bookList;
+import java.util.ArrayList;
+
+public class BookList implements Parcelable {
+    private ArrayList<Book> bookList = new ArrayList<>();
 
     public BookList(){
-
     }
 
-    public void add(Book book){
+    protected BookList(Parcel in) {
+        bookList = in.createTypedArrayList(Book.CREATOR);
+    }
 
+    public static final Creator<BookList> CREATOR = new Creator<BookList>() {
+        @Override
+        public BookList createFromParcel(Parcel in) {
+            return new BookList(in);
+        }
+
+        @Override
+        public BookList[] newArray(int size) {
+            return new BookList[size];
+        }
+    };
+
+    public void add(Book book){
+        bookList.add(book);
     }
 
     public void remove(Book book){
+        bookList.remove(book);
 
     }
 
@@ -22,8 +41,20 @@ public class BookList {
     }
 
     public int size(){
+        return bookList.size();
+    }
+
+    public ArrayList<Book> getList(){
+        return bookList;
+    }
+
+    @Override
+    public int describeContents() {
         return 0;
     }
 
-    //any additional methods
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeTypedList(bookList);
+    }
 }
