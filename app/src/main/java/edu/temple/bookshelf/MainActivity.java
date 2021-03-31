@@ -11,6 +11,7 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements BookListFragment.BookListFragmentInterface {
 
+    // global variables
     BookList bookList;
     boolean container2present;
     BookDetailsFragment bookDetailsFragment;
@@ -21,37 +22,40 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //checks if activity is in portrait or landscape
         container2present = findViewById(R.id.container_2) != null;
 
-         bookList = new BookList();
-        ArrayList<Book> test = new ArrayList();
+        bookList = new BookList();
 
-
+        //gets the string arrays from the xml values
         String[] books = getResources().getStringArray(R.array.books);
         String[] authors = getResources().getStringArray(R.array.authors);
+
+        //loops through arrays and adds them to booklist as book objects
         for (int i = 0; i < books.length; i++ ){
             bookList.add(new Book(books[i], authors[i]));
          }
 
-
+        //begins the fragment transaction and creates a new instance with booklist
         getSupportFragmentManager().beginTransaction().replace(R.id.container_1, BookListFragment.newInstance(bookList)).addToBackStack(null).commit();
+
+        //if in landscape mode, 2nd fragment is instatiated and filled
         if(container2present){
             bookDetailsFragment = new BookDetailsFragment();
-
-
             getSupportFragmentManager().beginTransaction().replace(R.id.container_2, bookDetailsFragment).commit();
         }
-
     }
 
     @Override
     public void itemClicked(int position) {
+        //position is given to global variable
         placeholder = position;
+
+        //screen will transfer if in portrait mode, otherwise the detail view will be changed
         if(!container2present) {
             getSupportFragmentManager().beginTransaction().replace(R.id.container_1, BookDetailsFragment.newInstance(bookList.get(position))).addToBackStack(null).commit();
         }else{
             bookDetailsFragment.displayBook(bookList.get(position));
-
         }
     }
 
@@ -66,12 +70,10 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         int placing = savedInstanceState.getInt("place");
-
         if(!container2present) {
             getSupportFragmentManager().beginTransaction().replace(R.id.container_1, BookDetailsFragment.newInstance(bookList.get(placing))).addToBackStack(null).commit();
         }else{
             bookDetailsFragment.displayBook(bookList.get(placing));
-
         }
     }
 }
