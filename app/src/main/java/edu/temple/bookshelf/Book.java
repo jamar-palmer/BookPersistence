@@ -4,8 +4,13 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Book implements Parcelable {
+
+
+    private int id;
+    private String coverURL;
     private String title;
     private String author;
+
 
     public Book(String title, String author){
         this.title = title;
@@ -13,8 +18,8 @@ public class Book implements Parcelable {
     }
 
     protected Book(Parcel in) {
-        title = in.readString();
-        author = in.readString();
+        id = in.readInt();
+        coverURL = in.readString();
     }
 
     public static final Creator<Book> CREATOR = new Creator<Book>() {
@@ -29,6 +34,9 @@ public class Book implements Parcelable {
         }
     };
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
     public void setAuthor(String author) {
         this.author = author;
     }
@@ -36,13 +44,24 @@ public class Book implements Parcelable {
     public String getTitle() {
         return title;
     }
-
     public String getAuthor() {
         return author;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
+    public void setCoverURL(String coverURL) {
+        this.coverURL = coverURL;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getCoverURL() {
+        return coverURL;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override
@@ -52,7 +71,7 @@ public class Book implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(title);
-        dest.writeString(author);
+        dest.writeInt(id);
+        dest.writeString(coverURL);
     }
 }

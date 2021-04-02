@@ -39,6 +39,7 @@ public class BookAdapter extends ArrayAdapter {
 
         textView.setText(((Book) (getItem(position))).getTitle());
         textView2.setText(((Book) (getItem(position))).getAuthor());
+        //linearLayout.notifyAll();
         return linearLayout;
     }
 }
