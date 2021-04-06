@@ -100,9 +100,6 @@ public class BookSearchActivity extends AppCompatActivity {
                             setResult(RESULT_OK, intent);
                             finish();
                         }
-
-
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
