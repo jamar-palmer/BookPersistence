@@ -23,7 +23,6 @@ public class BookListFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_BOOKLIST = "param1";
 
-    // TODO: Rename and change types of parameters
     private BookList bookList;
     private BookAdapter bookAdapter;
     private ArrayList<Book> arrayList;

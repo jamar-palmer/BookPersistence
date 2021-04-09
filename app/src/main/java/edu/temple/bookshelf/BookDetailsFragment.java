@@ -69,7 +69,6 @@ public class BookDetailsFragment extends Fragment {
         // Inflate the layout for this fragment
         View l =  inflater.inflate(R.layout.fragment_book_details, container, false);
 
-
         textView = l.findViewById(R.id.textView);
         textView2 = l.findViewById(R.id.textView2);
         imageView = l.findViewById(R.id.imageView2);

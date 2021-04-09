@@ -9,35 +9,48 @@
 
     <FrameLayout
         android:id="@+id/container_1"
-        android:layout_width="206dp"
-        android:layout_height="259dp"
-        android:layout_marginTop="4dp"
+        android:layout_width="300dp"
+        android:layout_height="170dp"
         android:layout_weight="1"
         android:gravity="bottom"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnSearch"
+        app:layout_constraintTop_toBottomOf="@+id/container_3"
         app:layout_constraintVertical_bias="1.0" />
 
     <FrameLayout
         android:id="@+id/container_2"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_width="434dp"
+        android:layout_height="414dp"
+        android:layout_marginStart="1dp"
         android:layout_weight="3"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/container_1" />
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/container_3"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnSearch"
         android:layout_width="165dp"
         android:layout_height="42dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="28dp"
+        android:layout_marginStart="64dp"
+        android:layout_marginTop="16dp"
         android:onClick="searchClicked"
         android:text="Search"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/container_3"
+        android:layout_width="297dp"
+        android:layout_height="142dp"
+        android:layout_marginTop="4dp"
+        android:layout_weight="1"
+        android:gravity="top"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btnSearch">
+
+    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

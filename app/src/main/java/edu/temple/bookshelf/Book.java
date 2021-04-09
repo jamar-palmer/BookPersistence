@@ -10,6 +10,7 @@ public class Book implements Parcelable {
     private String coverURL;
     private String title;
     private String author;
+    private int duration;
 
 
     public Book(String title, String author){
@@ -55,6 +56,9 @@ public class Book implements Parcelable {
     public int getId() {
         return id;
     }
+    public int getDuration() {
+        return duration;
+    }
 
     public String getCoverURL() {
         return coverURL;
@@ -62,6 +66,9 @@ public class Book implements Parcelable {
 
     public void setId(int id) {
         this.id = id;
+    }
+    public void setDuration(int duration) {
+        this.duration = duration;
     }
 
     @Override
