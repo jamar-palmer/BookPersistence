@@ -2,6 +2,8 @@ package edu.temple.bookshelf;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import android.os.Handler;
@@ -11,6 +13,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.util.ResourceBundle;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,10 +26,8 @@ public class ControlFragment extends Fragment {
 
 
     private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
     private String mParam1;
-    private String mParam2;
 
     private TextView textView;
     private Button play;
@@ -51,11 +54,35 @@ public class ControlFragment extends Fragment {
     }
 
     @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt("id", currentId);
+        outState.putString("bookT", bookTitle);
+        outState.putInt("prog", currentProgress);
+    }
+
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+        if (savedInstanceState != null) {
+            currentId = savedInstanceState.getInt("id");
+            bookTitle = savedInstanceState.getString("bookT");
+            currentProgress = savedInstanceState.getInt("prog");
+        } else {
+
+        }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if(textView != null && currentId >= 0){
+            nowPlaying();
+            setProgress(currentProgress);
         }
     }
 
@@ -71,14 +98,18 @@ public class ControlFragment extends Fragment {
         stop = l.findViewById(R.id.btnStop);
         seekBar = l.findViewById(R.id.seekBar);
 
+
+
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                int temp = ((MainActivity) getActivity()).getBookItem();
 
-                if(currentId < 0){
+                if(temp < 0){
                     //do nothing
                 }else{
-                    ((ControlFragmentInterface) getActivity()).playAudio(currentId+1);
+                    ((ControlFragmentInterface) getActivity()).playAudio(temp+1);
+                    bookTitle = ((MainActivity) getActivity()).getBookName();
                     nowPlaying();
                 }
             }
@@ -102,11 +133,10 @@ public class ControlFragment extends Fragment {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                if(progress <1){
-                    progress = 0;
-                }
-                    ((ControlFragmentInterface) getActivity()).seekAudio(progress);
-
+               if(fromUser) {
+                   ((ControlFragmentInterface) getActivity()).seekAudio(progress);
+                   currentProgress = progress;
+               }
             }
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {}

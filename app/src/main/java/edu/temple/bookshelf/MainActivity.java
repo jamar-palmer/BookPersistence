@@ -29,8 +29,8 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     boolean container2present;
     BookDetailsFragment bookDetailsFragment;
     ControlFragment controlFragment;
-    int counter = 0;
     int placeholder=0;
+    boolean contain3 = false;
 
     AudiobookService.MediaControlBinder audiobookService;
     AudiobookService.BookProgress bookProgress;
@@ -52,19 +52,16 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     Handler audioHandler = new Handler(new Handler.Callback() {
         @Override
         public boolean handleMessage(@NonNull Message msg) {
-
-            bookProgress = (AudiobookService.BookProgress) msg.obj;
-            if(bookProgress != null) {
-                //int ds = bookProgress.getBookId();
-                // bookList.get(bookProgress.getBookId() -1).setDuration(bookProgress.getProgress());
-                controlFragment.setProgress(bookProgress.getProgress());
+            if(isConnected) {
+                bookProgress = (AudiobookService.BookProgress) msg.obj;
+                if (bookProgress != null) {
+                    // bookList.get(bookProgress.getBookId() -1).setDuration(bookProgress.getProgress());
+                    controlFragment.setProgress(bookProgress.getProgress());
+                }
             }
                 return false;
-
         }
     });
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,18 +75,22 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
         //checks if activity is in portrait or landscape
         container2present = findViewById(R.id.container_2) != null;
-        controlFragment = new ControlFragment();
-        getSupportFragmentManager().beginTransaction().replace(R.id.container_3, controlFragment).addToBackStack(null).commit();
+
 
         //if in landscape mode, 2nd fragment is instatiated and filled
         if(container2present){
             bookDetailsFragment = new BookDetailsFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.container_2, bookDetailsFragment).commit();
         }
+
+        if(!contain3) {
+            controlFragment = new ControlFragment();
+            getSupportFragmentManager().beginTransaction().replace(R.id.container_3, controlFragment).addToBackStack(null).commit();
+            contain3 = true;
+        }
     }
 
     public void searchClicked(View view){
-
             Intent launchIntent = new Intent(MainActivity.this, BookSearchActivity.class);
             startActivityForResult(launchIntent, 1);
     }
@@ -99,7 +100,6 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 1) {
             if (resultCode == RESULT_OK) {
-
                 //load all extras in their own arraylists
                 ArrayList<Integer> ids  = data.getIntegerArrayListExtra("id");
                 ArrayList<String> coverURL = data.getStringArrayListExtra("pictures");
@@ -129,6 +129,8 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     @Override
     protected void onResume() {
         super.onResume();
+        if(audiobookService != null)
+            audiobookService.setProgressHandler(audioHandler);
     }
 
     @Override
@@ -151,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         super.onSaveInstanceState(outState);
         outState.putInt("place", placeholder);
         outState.putParcelable("parcel", bookList);
-
+        outState.putBoolean("contain3", contain3);
     }
 
     @Override
@@ -162,21 +164,36 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         int placing = savedInstanceState.getInt("place");
         placeholder = placing;
         bookList = savedInstanceState.getParcelable("parcel");
+        contain3 = savedInstanceState.getBoolean("contain3");
 
+        if(isConnected){
+            audiobookService.play(placeholder);
+        }
         //check if booklist has been loaded yey
         if(bookList.size() != 0) {
+
+            controlFragment.storeId(placeholder);
+            controlFragment.storeBookTitle(bookList.get(placeholder).getTitle());
             if (!container2present) {
                 //operation for a single portrait view
                 getSupportFragmentManager().beginTransaction().replace(R.id.container_1, BookDetailsFragment.newInstance(bookList.get(placing))).addToBackStack(null).commit();
+
             } else {
                 //operation for a landscape view
                 getSupportFragmentManager().popBackStack();
                 getSupportFragmentManager().popBackStack();
                 bookDetailsFragment.displayBook(bookList.get(placing));
-                controlFragment.storeId(placeholder);
-                controlFragment.storeBookTitle(bookList.get(placeholder).getTitle());
+
             }
         }
+    }
+
+    public int getBookItem(){
+        return placeholder;
+    }
+
+    public String getBookName(){
+        return bookList.get(placeholder).getTitle();
     }
 
     public boolean playing(){
@@ -193,7 +210,6 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     public void pauseAudio() {
         controlFragment.switchText();
         audiobookService.pause();
-
     }
 
     @Override
@@ -201,9 +217,10 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         audiobookService.stop();
     }
 
-    @Override
     public void seekAudio(int position) {
+        if(audiobookService != null && isConnected) {
             audiobookService.seekTo(position);
 
+        }
     }
 }
