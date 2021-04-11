@@ -75,6 +75,13 @@ public class ControlFragment extends Fragment {
         } else {
 
         }
+        setRetainInstance(true);
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        setRetainInstance(true);
     }
 
     @Override
@@ -84,6 +91,7 @@ public class ControlFragment extends Fragment {
             nowPlaying();
             setProgress(currentProgress);
         }
+
     }
 
     @Override
@@ -157,6 +165,7 @@ public class ControlFragment extends Fragment {
 
     public void clearSelection(){
         textView.setText(" ");
+        setProgress(0);
     }
 
     public void nowPlaying(){
