@@ -116,9 +116,14 @@ public class ControlFragment extends Fragment {
                 if(temp < 0){
                     //do nothing
                 }else{
-                    ((ControlFragmentInterface) getActivity()).playAudio(temp+1);
+
                     bookTitle = ((MainActivity) getActivity()).getBookName();
-                    nowPlaying();
+                    if(bookTitle.equalsIgnoreCase("blank")){
+                        //do nothing
+                    }else{
+                        ((ControlFragmentInterface) getActivity()).playAudio(temp+1);
+                        nowPlaying();
+                    }
                 }
             }
         });

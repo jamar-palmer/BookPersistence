@@ -193,7 +193,11 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     }
 
     public String getBookName(){
-        return bookList.get(placeholder).getTitle();
+        if(bookList.isEmpty()){
+            return "blank";
+        }else {
+            return bookList.get(placeholder).getTitle();
+        }
     }
 
     public boolean playing(){
