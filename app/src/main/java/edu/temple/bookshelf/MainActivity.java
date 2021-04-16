@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
         if(!contain3) {
             controlFragment = new ControlFragment();
-            getSupportFragmentManager().beginTransaction().replace(R.id.container_3, controlFragment).addToBackStack(null).commit();
+            getSupportFragmentManager().beginTransaction().add(R.id.container_3, controlFragment).addToBackStack(null).commit();
             contain3 = true;
         }
     }
