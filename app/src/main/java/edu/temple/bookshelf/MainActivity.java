@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -15,6 +16,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -35,6 +40,11 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     AudiobookService.MediaControlBinder audiobookService;
     AudiobookService.BookProgress bookProgress;
     boolean isConnected;
+
+    String internalFile = "myfile";
+    File file;
+    SharedPreferences preferences;
+    boolean autosave;
 
     ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
@@ -69,6 +79,25 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         setContentView(R.layout.activity_main);
         bookList = new BookList();
 
+        file = new File(getFilesDir(), internalFile);
+        preferences = getPreferences(MODE_PRIVATE);
+
+        autosave = preferences.getBoolean("autosave", false);
+        if(autosave && file.exists()){
+            try{
+                BufferedReader br = new BufferedReader(new FileReader(file));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while((line = br.readLine()) != null){
+                    sb.append(line);
+                    sb.append('\n');
+                }
+                br.close();
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+        }
+
         Intent launchIntent = new Intent(MainActivity.this, edu.temple.audiobookplayer.AudiobookService.class);
         launchIntent.putExtra("song", 10);
         bindService(launchIntent, serviceConnection, BIND_AUTO_CREATE);
@@ -88,6 +117,25 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
             getSupportFragmentManager().beginTransaction().add(R.id.container_3, controlFragment).addToBackStack(null).commit();
             contain3 = true;
         }
+    }
+
+    public void downloadBook(int booknum){
+        String downloadApi = "https://kamorris.com/lab/audlib/download.php?id=" + booknum;
+    }
+
+    public void storeFile(AudiobookService.MediaControlBinder bookSave){
+
+            try {
+                FileOutputStream outputStream = new FileOutputStream(file);
+               // outputStream.write(bookSave);
+                outputStream.close();
+            } catch (Exception e){
+                e.printStackTrace();
+            }
+
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean("autosave", true);
+        editor.apply();
     }
 
     public void searchClicked(View view){
