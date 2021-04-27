@@ -44,6 +44,14 @@ public class BookList implements Parcelable {
         return bookList.size();
     }
 
+    public void clear(){
+        bookList.clear();
+    }
+
+    public boolean isEmpty(){
+        return bookList.isEmpty();
+    }
+
     public ArrayList<Book> getList(){
         return bookList;
     }

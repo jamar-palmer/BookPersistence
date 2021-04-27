@@ -1,6 +1,7 @@
 package edu.temple.bookshelf;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,7 +13,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
+
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -26,6 +34,7 @@ public class BookDetailsFragment extends Fragment {
     private static final String ARG_BOOK = "param1";
     private TextView textView2;
     private TextView textView;
+    private ImageView imageView;
 
     // TODO: Rename and change types of parameters
     private Book book;
@@ -60,9 +69,9 @@ public class BookDetailsFragment extends Fragment {
         // Inflate the layout for this fragment
         View l =  inflater.inflate(R.layout.fragment_book_details, container, false);
 
-
         textView = l.findViewById(R.id.textView);
         textView2 = l.findViewById(R.id.textView2);
+        imageView = l.findViewById(R.id.imageView2);
         if(book!= null){
             displayBook(book);
         }
@@ -74,9 +83,7 @@ public class BookDetailsFragment extends Fragment {
     public void displayBook(Book book){
         textView.setText(book.getTitle());
         textView2.setText(book.getAuthor());
+        Picasso.get().load(Uri.parse(book.getCoverURL())).into(imageView);
+
     }
-
-
-
-
 }

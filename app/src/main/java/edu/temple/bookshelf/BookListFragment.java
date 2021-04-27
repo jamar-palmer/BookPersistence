@@ -23,9 +23,9 @@ public class BookListFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_BOOKLIST = "param1";
 
-    // TODO: Rename and change types of parameters
     private BookList bookList;
-
+    private BookAdapter bookAdapter;
+    private ArrayList<Book> arrayList;
 
     public BookListFragment() {
 
@@ -55,11 +55,12 @@ public class BookListFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         ListView listView = (ListView) inflater.inflate(R.layout.fragment_book_list, container, false);
-        ArrayList<Book> arrayList = new ArrayList();
+        arrayList = new ArrayList();
         for(int i = 0; i < bookList.size(); i++){
             arrayList.add(bookList.get(i));
         }
-        listView.setAdapter(new BookAdapter(getActivity(), android.R.layout.simple_list_item_1, arrayList));
+        bookAdapter = new BookAdapter(getActivity(), android.R.layout.simple_list_item_1, arrayList);
+        listView.setAdapter(bookAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -69,7 +70,11 @@ public class BookListFragment extends Fragment {
         return listView;
     }
 
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        bookAdapter.notifyDataSetChanged();
+    }
 
     interface BookListFragmentInterface {
         public void itemClicked(int position);
