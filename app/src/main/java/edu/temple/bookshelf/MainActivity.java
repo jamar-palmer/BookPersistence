@@ -8,6 +8,8 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -17,10 +19,13 @@ import android.view.View;
 import android.widget.Toast;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.InputStream;
 import java.lang.reflect.Array;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
@@ -41,10 +46,10 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
     AudiobookService.BookProgress bookProgress;
     boolean isConnected;
 
-    String internalFile = "myfile";
+    String internalFile = "myaudiofile";
     File file;
     SharedPreferences preferences;
-    boolean autosave;
+    int currentBookSave;
 
     ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
@@ -81,22 +86,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
         file = new File(getFilesDir(), internalFile);
         preferences = getPreferences(MODE_PRIVATE);
-
-        autosave = preferences.getBoolean("autosave", false);
-        if(autosave && file.exists()){
-            try{
-                BufferedReader br = new BufferedReader(new FileReader(file));
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while((line = br.readLine()) != null){
-                    sb.append(line);
-                    sb.append('\n');
-                }
-                br.close();
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-        }
+        currentBookSave = preferences.getInt("currentBook", -1);
 
         Intent launchIntent = new Intent(MainActivity.this, edu.temple.audiobookplayer.AudiobookService.class);
         launchIntent.putExtra("song", 10);
@@ -104,7 +94,6 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
         //checks if activity is in portrait or landscape
         container2present = findViewById(R.id.container_2) != null;
-
 
         //if in landscape mode, 2nd fragment is instatiated and filled
         if(container2present){
@@ -119,23 +108,23 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
         }
     }
 
-    public void downloadBook(int booknum){
+    //storing of the file locally with id
+    public void storeFile(int booknum){
         String downloadApi = "https://kamorris.com/lab/audlib/download.php?id=" + booknum;
-    }
 
-    public void storeFile(AudiobookService.MediaControlBinder bookSave){
-
-            try {
-                FileOutputStream outputStream = new FileOutputStream(file);
-               // outputStream.write(bookSave);
-                outputStream.close();
-            } catch (Exception e){
-                e.printStackTrace();
-            }
-
+        try {
+            //Uri uri = Uri.parse(downloadApi);
+            FileOutputStream outputStream = new FileOutputStream(file);
+         //outputStream.write(uri.toString().getBytes());
+            outputStream.write(downloadApi.getBytes());
+            outputStream.close();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean("autosave", true);
+        editor.putInt("currentBook", booknum);
         editor.apply();
+        currentBookSave = booknum;
     }
 
     public void searchClicked(View view){
@@ -183,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
     @Override
     public void itemClicked(int position) {
+
         //position is given to global variable
         placeholder = position;
         controlFragment.storeId(position);
@@ -254,8 +244,17 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
     @Override
     public void playAudio(int id) {
-        audiobookService.play(id);
-        audiobookService.setProgressHandler(audioHandler);
+        //check if previously downloaded
+        if(file.exists() && currentBookSave == id){
+            //play from stored file or download current file
+            audiobookService.play(file,0 );
+            audiobookService.setProgressHandler(audioHandler);
+
+        }else{
+            audiobookService.play(id);
+            audiobookService.setProgressHandler(audioHandler);
+            storeFile(id);
+        }
     }
 
     @Override
